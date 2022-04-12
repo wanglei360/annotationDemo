@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="testView的部分"
+        android:textColor="#000"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/tv1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:background="@android:color/holo_blue_bright"
+        android:gravity="center"
+        android:onClick="btnClick1"
+        android:padding="10dp"
+        android:text="java反射的"
+        android:textColor="#000"
+        android:textSize="33sp"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/tv2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@android:color/holo_blue_bright"
+        android:gravity="center"
+        android:onClick="btnClick2"
+        android:padding="10dp"
+        android:text="java的"
+        android:textColor="#000"
+        android:textSize="33sp"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/tv3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@android:color/holo_blue_bright"
+        android:gravity="center"
+        android:onClick="btnClick3"
+        android:padding="10dp"
+        android:text="kotlin的"
+        android:textColor="#000"
+        android:textSize="33sp"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/tv4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@android:color/holo_blue_bright"
+        android:gravity="center"
+        android:onClick="btnClick4"
+        android:padding="10dp"
+        android:text="ksp kotlin的"
+        android:textColor="#000"
+        android:textSize="33sp"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+</LinearLayout>
