@@ -18,52 +18,47 @@ import com.squareup.kotlinpoet.TypeSpec
  */
 class KspProcessor(env: SymbolProcessorEnvironment) : SymbolProcessor {
 
-    private lateinit var logger: KSPLogger
-    private lateinit var codeGenerator: CodeGenerator
-    private lateinit var routerBindType: KSType
+    private var routerBindType: KSType? = null
     private var isload = false
-
-
+    private val codeGenerator: CodeGenerator by lazy { env.codeGenerator }
+    private val logger: KSPLogger by lazy { env.logger }
     private val packageInfo: HashMap<String, String> by lazy { HashMap() }
-
-
-    init {
-        this.codeGenerator = env.codeGenerator
-        this.logger = env.logger
-    }
-
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
         if (isload) {
             return emptyList()
         }
 
-        //这一行是写死的生成代码，没有动态数据，没找到办法获取
-        resolver.initPackageInfo()
+        val symbols = resolver.getSymbolsWithAnnotation(KspBindView::class.java.name)
 
-        val symbols1 = resolver.getSymbolsWithAnnotation(KspBindView::class.java.name)
-
-        val routerBindType = resolver.getClassDeclarationByName(
+        routerBindType = resolver.getClassDeclarationByName(
             resolver.getKSNameFromString(KspBindView::class.java.name)
         )?.asType(emptyList()) ?: kotlin.run {
             logger.error("JsonClass type not found on the classpath.")
             return emptyList()
         }
-
-        symbols1.forEach {
-            it.annotations.forEach {
-                val shortName = it.shortName
-                shortName.getShortName()//注解的名字
-
-                it.arguments.forEach {
-                    it.value//注解的值
-                }
+        symbols.asSequence().forEach {
+            if (!add(it)) {
+                //前面的那些各种检查之类的要有，否则报错，各种奇怪的错
+                resolver.initPackageInfo()
             }
         }
-
-        return symbols1.toList()
+        isload = true
+        return emptyList()
     }
 
+    private fun add(type: KSAnnotated): Boolean {
+        logger.check(type is KSClassDeclaration && type.origin == Origin.KOTLIN, type) {
+            "@JsonClass can't be applied to $type: must be a Kotlin class"
+        }
+        return type !is KSClassDeclaration
+    }
+
+    fun KSPLogger.check(condition: Boolean, element: KSNode?, message: () -> String) {
+        if (!condition) {
+            error(message(), element)
+        }
+    }
 
     /**
      * 收集注解调用处的类名和路径
@@ -79,18 +74,19 @@ class KspProcessor(env: SymbolProcessorEnvironment) : SymbolProcessor {
             packageInfo[className] = classPath
         }
 
-        val packageName = "com.kspdemo"
+        val packageName = "com.demo"
         val className = "ClassNameSuffixyyyyyy"
-        val parameter = ClassName.bestGuess("$packageName.NewMainActivity")
+        val parameter = ClassName.bestGuess("$packageName.KspKotlinAnnotationActivity")
 
+        // todo 79行报FileAlreadyExistsException，所以导致程序无法正常运行，
+        // todo 虽然报错，但是下方代码可以正常生成代码，文件位置app/build/generated/ksp/debug/kotlin/com/demo
         val file = codeGenerator.createNewFile(Dependencies.ALL_FILES, packageName, className)
-//        val spec = FileSpec.builder(packageName, className)
-//            .addType(getTypeSpec(className, parameter))
-//            .build()
-//        file.use {
-//            val content = spec.toString().toByteArray()
-//            it.write(content)
-//        }
+        val spec = FileSpec.builder(packageName, className)
+            .addType(getTypeSpec(className, parameter))
+            .build()
+        file.use {
+            it.write(spec.toString().toByteArray())
+        }
     }
 
 

@@ -1,9 +1,9 @@
 plugins {
-    id 'java-library'
-    id 'org.jetbrains.kotlin.jvm'
+    id("java-library")
+    id("org.jetbrains.kotlin.jvm")
 }
 dependencies {
-    implementation 'androidx.annotation:annotation:1.3.0'
+    implementation("androidx.annotation:annotation:1.3.0")
 }
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8

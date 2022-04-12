@@ -7,6 +7,6 @@ package com.lib.imp
  * <p> 修改时间：
  * <p> 修改备注：
  */
-@Target(AnnotationTarget.FIELD)
+@Target(AnnotationTarget.FIELD, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.SOURCE)
 annotation class KspBindView(val value: Int = -1)
